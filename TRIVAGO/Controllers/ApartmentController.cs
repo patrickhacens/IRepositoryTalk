@@ -36,5 +36,13 @@ namespace TRIVAGO.Controllers
                            from <= r.To && r.To <= to
                         )).ToListAsync();
 
+        [HttpGet]
+        [Route("free2")]
+        public async Task<IEnumerable<Apartment>> GetFree2(DateTime from, DateTime to) =>
+            await Db.Apartments
+                    .Include(a => a.Reservations)
+                    .FreeBetween(from, to)
+                    .ToListAsync();
+
     }
 }

@@ -11,10 +11,11 @@ namespace TRIVAGO.Controllers
     [Route("api/[controller]")]
     public class ReservationController : Controller
     {
-        private Db db { get; }
+        private Db Db { get; }
+
         public ReservationController(Db db)
         {
-            this.db = db;
+            this.Db = db;
         }
 
         [HttpPost]
@@ -22,15 +23,27 @@ namespace TRIVAGO.Controllers
         {
             DateTime from = reservation.From, to = reservation.To;
 
-            if (await db.Reservations.AnyAsync(r =>
+            if (await Db.Reservations.AnyAsync(r =>
                              r.From <= from && from <= r.To ||
                              r.From <= to && to <= r.To ||
                              from <= r.From && r.From <= to ||
                              from <= r.To && r.To <= to))
-                return Forbid();
+                return NotFound();
 
-            db.Reservations.Add(reservation);
-            await db.SaveChangesAsync();
+            Db.Reservations.Add(reservation);
+            await Db.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Reservate2([FromBody]Reservation reservation)
+        {
+            DateTime from = reservation.From, to = reservation.To;
+            if (!(await Db.Apartments.FreeBetween(reservation.From, reservation.To).Where(d => d.Id == reservation.ApartmentId).AnyAsync()))
+                return NotFound();
+
+            Db.Reservations.Add(reservation);
+            await Db.SaveChangesAsync();
             return Ok();
         }
     }

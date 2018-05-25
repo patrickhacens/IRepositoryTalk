@@ -19,6 +19,7 @@ namespace TRIVAGO.Domain
 
         }
 
+
         public Db(DbContextOptions options) : base(options)
         {
 

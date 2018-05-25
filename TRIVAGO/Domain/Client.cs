@@ -13,6 +13,6 @@ namespace TRIVAGO.Domain
 
         public string Phone { get; set; }
 
-        public ICollection<Reservation> Reservations { get; set; }
+        public List<Reservation> Reservations { get; set; }
     }
 }
